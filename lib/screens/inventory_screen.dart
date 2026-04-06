@@ -28,39 +28,59 @@ class InventoryScreen extends StatelessWidget {
           }
 
           final docs = snapshot.data!.docs;
+          final itemCount = docs.length; // <-- COUNT ITEMS
 
-          return ListView.builder(
-            itemCount: docs.length,
-            itemBuilder: (context, index) {
-              final data = docs[index].data() as Map<String, dynamic>;
-              final name = data['name'] ?? 'Unnamed';
-              final price = data['price'] ?? 0;
-
-              return ListTile(
-                title: Text(name),
-                subtitle: Text("Price: \$${price.toString()}"),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => itemsRef.doc(docs[index].id).delete(),
+          return Column(
+            children: [
+              // ITEM COUNT DISPLAY
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  "Total Items: $itemCount",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => ItemForm(
-                      docId: docs[index].id,
-                      initialName: name,
-                      initialPrice: price.toString(),
-                      onSubmit: (updatedName, updatedPrice) {
-                        itemsRef.doc(docs[index].id).update({
-                          'name': updatedName,
-                          'price': double.parse(updatedPrice),
-                        });
+              ),
+
+              // LIST OF ITEMS
+              Expanded(
+                child: ListView.builder(
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    final data = docs[index].data() as Map<String, dynamic>;
+                    final name = data['name'] ?? 'Unnamed';
+                    final price = data['price'] ?? 0;
+
+                    return ListTile(
+                      title: Text(name),
+                      subtitle: Text("Price: \$${price.toString()}"),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => itemsRef.doc(docs[index].id).delete(),
+                      ),
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => ItemForm(
+                            docId: docs[index].id,
+                            initialName: name,
+                            initialPrice: price.toString(),
+                            onSubmit: (updatedName, updatedPrice) {
+                              itemsRef.doc(docs[index].id).update({
+                                'name': updatedName,
+                                'price': double.parse(updatedPrice),
+                              });
+                            },
+                          ),
+                        );
                       },
-                    ),
-                  );
-                },
-              );
-            },
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),

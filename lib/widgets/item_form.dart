@@ -40,7 +40,6 @@ class _ItemFormState extends State<ItemForm> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // NAME FIELD
             TextFormField(
               controller: nameCtrl,
               decoration: const InputDecoration(labelText: "Item Name"),
@@ -51,8 +50,6 @@ class _ItemFormState extends State<ItemForm> {
                 return null;
               },
             ),
-
-            // PRICE FIELD
             TextFormField(
               controller: priceCtrl,
               decoration: const InputDecoration(labelText: "Price"),
@@ -71,7 +68,6 @@ class _ItemFormState extends State<ItemForm> {
           ],
         ),
       ),
-
       actions: [
         TextButton(
           child: const Text("Cancel"),
