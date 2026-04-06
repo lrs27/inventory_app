@@ -1,17 +1,71 @@
-# inventory_app
+1. Quantity‑Aware Delete Logic (Smart Delete Popup)
+   This feature upgrades the delete behavior to match real inventory workflows. Instead of instantly deleting an item when the trash icon is tapped, the app now displays a confirmation dialog with quantity‑based options.
 
-A new Flutter project.
+✨ What This Feature Adds
+A confirmation popup appears before deleting.
 
-## Getting Started
+If an item has quantity > 1, the user can:
 
-This project is a starting point for a Flutter application.
+Decrease quantity by 1, or
 
-A few resources to get you started if this is your first Flutter project:
+Delete the entire item
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+If quantity is 1, only the full delete option is shown.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Prevents accidental deletion of items with remaining stock.
+
+🛠 How It Works
+The delete icon triggers an AlertDialog.
+
+The dialog checks the current quantity stored in Firestore.
+
+Depending on the quantity:
+
+update({'quantity': quantity - 1})
+
+or delete() for full removal.
+
+💡 Why It Matters
+More realistic inventory management.
+
+Reduces user mistakes.
+
+Supports workflows like selling, restocking, or adjusting stock levels.
+
+2. Full Quantity Support in Add/Edit Item Form
+   The item form was enhanced to include a quantity field, making quantity a core part of the inventory model.
+
+✨ What This Feature Adds
+Users can set quantity when adding a new item.
+
+Users can edit quantity when modifying an existing item.
+
+Validation ensures:
+
+Quantity is required
+
+Quantity must be numeric
+
+Quantity cannot be negative
+
+🛠 How It Works
+Added a quantityCtrl controller to the form.
+
+Added initialQuantity for editing existing items.
+
+Updated onSubmit to return (name, price, quantity).
+
+Firestore documents now include:
+
+json
+{
+"name": "Item Name",
+"price": 10.0,
+"quantity": 5
+}
+💡 Why It Matters
+Enables accurate stock tracking.
+
+Prevents invalid Firestore data.
+
+Makes the app feel more complete and professional.
