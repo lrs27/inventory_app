@@ -6,24 +6,26 @@ class ItemService {
     'items',
   );
 
-  // Read (typed stream)
-  Stream<List<Item>> getItems() {
-    return _items.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => Item.fromSnapshot(doc)).toList();
-    });
-  }
-
-  // Create
+  //CREATE
   Future<void> addItem(Item item) async {
     await _items.add(item.toMap());
   }
 
-  // Update
+  //READ (typed real-time stream)
+  Stream<List<Item>> getItems() {
+    return _items.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Item.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+    });
+  }
+
+  //UPDATE
   Future<void> updateItem(Item item) async {
     await _items.doc(item.id).update(item.toMap());
   }
 
-  // Delete
+  //DELETE
   Future<void> deleteItem(String id) async {
     await _items.doc(id).delete();
   }

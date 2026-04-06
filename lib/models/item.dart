@@ -1,28 +1,27 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Item {
-  final String id;
+  final String? id; // Firestore doc ID (nullable when creating)
   final String name;
   final double price;
   final int quantity;
 
   Item({
-    required this.id,
+    this.id,
     required this.name,
     required this.price,
     required this.quantity,
   });
 
-  factory Item.fromSnapshot(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+  // Convert Firestore document → Item object
+  factory Item.fromMap(Map<String, dynamic> data, String documentId) {
     return Item(
-      id: doc.id,
-      name: data['name'],
+      id: documentId,
+      name: data['name'] ?? '',
       price: (data['price'] as num).toDouble(),
       quantity: data['quantity'] ?? 0,
     );
   }
 
+  // Convert Item object → Firestore map
   Map<String, dynamic> toMap() {
     return {'name': name, 'price': price, 'quantity': quantity};
   }
