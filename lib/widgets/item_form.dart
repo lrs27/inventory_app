@@ -4,13 +4,16 @@ class ItemForm extends StatefulWidget {
   final String? docId;
   final String? initialName;
   final String? initialPrice;
-  final Function(String name, String price) onSubmit;
+  final String? initialQuantity;
+
+  final Function(String name, String price, String quantity) onSubmit;
 
   const ItemForm({
     super.key,
     this.docId,
     this.initialName,
     this.initialPrice,
+    this.initialQuantity,
     required this.onSubmit,
   });
 
@@ -23,12 +26,14 @@ class _ItemFormState extends State<ItemForm> {
 
   late TextEditingController nameCtrl;
   late TextEditingController priceCtrl;
+  late TextEditingController quantityCtrl;
 
   @override
   void initState() {
     super.initState();
     nameCtrl = TextEditingController(text: widget.initialName ?? "");
     priceCtrl = TextEditingController(text: widget.initialPrice ?? "");
+    quantityCtrl = TextEditingController(text: widget.initialQuantity ?? "");
   }
 
   @override
@@ -40,6 +45,7 @@ class _ItemFormState extends State<ItemForm> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // NAME
             TextFormField(
               controller: nameCtrl,
               decoration: const InputDecoration(labelText: "Item Name"),
@@ -50,6 +56,8 @@ class _ItemFormState extends State<ItemForm> {
                 return null;
               },
             ),
+
+            // PRICE
             TextFormField(
               controller: priceCtrl,
               decoration: const InputDecoration(labelText: "Price"),
@@ -58,9 +66,24 @@ class _ItemFormState extends State<ItemForm> {
                 if (value == null || value.trim().isEmpty) {
                   return "Price is required";
                 }
-                final parsed = double.tryParse(value);
-                if (parsed == null || parsed <= 0) {
-                  return "Enter a valid positive number";
+                if (double.tryParse(value) == null) {
+                  return "Enter a valid number";
+                }
+                return null;
+              },
+            ),
+
+            // QUANTITY
+            TextFormField(
+              controller: quantityCtrl,
+              decoration: const InputDecoration(labelText: "Quantity"),
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return "Quantity is required";
+                }
+                if (int.tryParse(value) == null) {
+                  return "Enter a valid whole number";
                 }
                 return null;
               },
@@ -68,6 +91,7 @@ class _ItemFormState extends State<ItemForm> {
           ],
         ),
       ),
+
       actions: [
         TextButton(
           child: const Text("Cancel"),
@@ -77,7 +101,11 @@ class _ItemFormState extends State<ItemForm> {
           child: const Text("Save"),
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              widget.onSubmit(nameCtrl.text.trim(), priceCtrl.text.trim());
+              widget.onSubmit(
+                nameCtrl.text.trim(),
+                priceCtrl.text.trim(),
+                quantityCtrl.text.trim(),
+              );
               Navigator.pop(context);
             }
           },

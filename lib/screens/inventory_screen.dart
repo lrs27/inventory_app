@@ -52,14 +52,62 @@ class InventoryScreen extends StatelessWidget {
                     final data = docs[index].data() as Map<String, dynamic>;
                     final name = data['name'] ?? 'Unnamed';
                     final price = data['price'] ?? 0;
+                    final quantity = data['quantity'] ?? 0;
 
                     return ListTile(
                       title: Text(name),
-                      subtitle: Text("Price: \$${price.toString()}"),
+                      subtitle: Text(
+                        "Price: \$${price.toString()} | Quantity: $quantity",
+                      ),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete),
-                        onPressed: () => itemsRef.doc(docs[index].id).delete(),
+                        onPressed: () {
+                          final quantity = data['quantity'] ?? 0;
+
+                          showDialog(
+                            context: context,
+                            builder: (_) {
+                              return AlertDialog(
+                                title: const Text("Delete Item"),
+                                content: Text(
+                                  quantity > 1
+                                      ? "This item has a quantity of $quantity.\nWhat would you like to do?"
+                                      : "Quantity is 1.\nDo you want to delete this item?",
+                                ),
+                                actions: [
+                                  // OPTION 1: Decrease quantity
+                                  if (quantity > 1)
+                                    TextButton(
+                                      child: const Text("Decrease Quantity"),
+                                      onPressed: () {
+                                        itemsRef.doc(docs[index].id).update({
+                                          'quantity': quantity - 1,
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+
+                                  // OPTION 2: Delete entire item
+                                  TextButton(
+                                    child: const Text("Delete Item"),
+                                    onPressed: () {
+                                      itemsRef.doc(docs[index].id).delete();
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+
+                                  // CANCEL
+                                  TextButton(
+                                    child: const Text("Cancel"),
+                                    onPressed: () => Navigator.pop(context),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       ),
+
                       onTap: () {
                         showDialog(
                           context: context,
@@ -67,12 +115,15 @@ class InventoryScreen extends StatelessWidget {
                             docId: docs[index].id,
                             initialName: name,
                             initialPrice: price.toString(),
-                            onSubmit: (updatedName, updatedPrice) {
-                              itemsRef.doc(docs[index].id).update({
-                                'name': updatedName,
-                                'price': double.parse(updatedPrice),
-                              });
-                            },
+                            initialQuantity: quantity.toString(),
+                            onSubmit:
+                                (updatedName, updatedPrice, updatedQuantity) {
+                                  itemsRef.doc(docs[index].id).update({
+                                    'name': updatedName,
+                                    'price': double.parse(updatedPrice),
+                                    'quantity': int.parse(updatedQuantity),
+                                  });
+                                },
                           ),
                         );
                       },
@@ -91,8 +142,12 @@ class InventoryScreen extends StatelessWidget {
           showDialog(
             context: context,
             builder: (_) => ItemForm(
-              onSubmit: (name, price) {
-                itemsRef.add({'name': name, 'price': double.parse(price)});
+              onSubmit: (name, price, quantity) {
+                itemsRef.add({
+                  'name': name,
+                  'price': double.parse(price),
+                  'quantity': int.parse(quantity),
+                });
               },
             ),
           );
