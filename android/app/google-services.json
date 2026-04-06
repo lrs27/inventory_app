@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "326918587685",
+    "project_id": "leema-inventory-app",
+    "storage_bucket": "leema-inventory-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326918587685:android:34c3c7d574d73d926e46cc",
+        "android_client_info": {
+          "package_name": "com.example.inventory_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPcSPcQ-xDKjlpzhGza3T-iq7DTliFrqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
